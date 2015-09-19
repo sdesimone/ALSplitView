@@ -27,7 +27,7 @@ typedef enum _ALSplitViewOrientation
 - (void)setMinimumWidth:(CGFloat)width forViewAtIndex:(NSInteger)index;
 - (void)setMaximumWidth:(CGFloat)width forViewAtIndex:(NSInteger)index;
 
-- (NSDictionary *)savePositionsOfHandles;
+@property (nonatomic, readonly, copy) NSDictionary *savePositionsOfHandles;
 - (void)restorePositionsOfHandlesWithDictionary:(NSDictionary *)dictionary;
 
 @end

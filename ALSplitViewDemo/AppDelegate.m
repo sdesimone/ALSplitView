@@ -28,12 +28,12 @@
 	[self.imageView setWantsLayer:YES];
 	[self.imageView2 setWantsLayer:YES];
 	[self.imageView3 setWantsLayer:YES];
-	CALayer *layer = [self.imageView layer];
-	[layer setContents:[NSImage imageNamed:@"dog"]];
-	layer = [self.imageView2 layer];
-	[layer setContents:[NSImage imageNamed:@"dog"]];
-	layer = [self.imageView3 layer];
-	[layer setContents:[NSImage imageNamed:@"dog"]];
+	CALayer *layer = (self.imageView).layer;
+	layer.contents = [NSImage imageNamed:@"dog"];
+	layer = (self.imageView2).layer;
+	layer.contents = [NSImage imageNamed:@"dog"];
+	layer = (self.imageView3).layer;
+	layer.contents = [NSImage imageNamed:@"dog"];
 
 	self.splitView.handleColor = [NSColor whiteColor];
 	self.splitView.handleWidth = 5.f;
@@ -55,7 +55,7 @@
 
 - (IBAction)onOrientation:(id)sender
 {
-	if ([self.orientationControl selectedSegment] == 0)
+	if ((self.orientationControl).selectedSegment == 0)
 	{
 		self.splitView.orientation = ALSplitViewOrientationVertical;
 	}
@@ -75,9 +75,9 @@
 
 - (IBAction)onRemoveView:(id)sender
 {
-	if ([[self.splitView subviews] count])
+	if ((self.splitView).subviews.count)
 	{
-		NSView *firstSubview = [self.splitView subviews][0];
+		NSView *firstSubview = (self.splitView).subviews[0];
 		[firstSubview removeFromSuperview];
 	}
 }
@@ -85,7 +85,7 @@
 - (IBAction)onAddSizeLimits:(id)sender
 {
 	CGFloat availableSize;
-	NSInteger count = [[self.splitView subviews] count];
+	NSInteger count = (self.splitView).subviews.count;
 	if (self.splitView.orientation == ALSplitViewOrientationHorizontal)
 	{
 		availableSize = self.splitView.frame.size.width;

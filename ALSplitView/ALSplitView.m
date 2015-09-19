@@ -38,7 +38,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 - (void)addSizingConstrants:(NSMutableArray *)constraints;
 
 - (NSInteger)handleIndexForPoint:(NSPoint)point;
-- (NSInteger)numberOfHandles;
+@property (nonatomic, readonly) NSInteger numberOfHandles;
 - (NSRect)rectOfHandleAtIndex:(NSInteger)index;
 
 - (void)setResizingCursor;
@@ -56,7 +56,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	[super updateTrackingAreas];
 }
 
-- (id)initWithFrame:(NSRect)frame
+- (instancetype)initWithFrame:(NSRect)frame
 {
 	self = [super initWithFrame:frame];
 	if (self)
@@ -72,7 +72,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 - (void)awakeFromNib
 {
 	// removing constraints loaded from xib, we'll make our own
-	[self removeConstraints:[self constraints]];
+	[self removeConstraints:self.constraints];
 	[super awakeFromNib];
 }
 
@@ -91,14 +91,14 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 
 - (void)setMinimumWidth:(CGFloat)width forViewAtIndex:(NSInteger)index
 {
-	if (index >= [[self subviews] count])
+	if (index >= self.subviews.count)
 	{
 #if ALSPLITVIEW_DEBUG
 		NSLog(@"ALSplitView: setMinimumWidth:forViewAtIndex: index out of boundaries!");
 #endif
 		return;
 	}
-	NSView *view = [self subviews][index];
+	NSView *view = self.subviews[index];
 	NSDictionary *metrics = @{ @"minWidth" : @(width) };
 	NSString *format;
 	if (self.orientation == ALSplitViewOrientationHorizontal)
@@ -116,14 +116,14 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 
 - (void)setMaximumWidth:(CGFloat)width forViewAtIndex:(NSInteger)index
 {
-	if (index >= [[self subviews] count])
+	if (index >= self.subviews.count)
 	{
 #if ALSPLITVIEW_DEBUG
 		NSLog(@"ALSplitView: setMaximumWidth:forViewAtIndex: index out of boundaries!");
 #endif
 		return;
 	}
-	NSView *view = [self subviews][index];
+	NSView *view = self.subviews[index];
 	NSDictionary *metrics = @{ @"maxWidth" : @(width) };
 	NSString *format;
 	if (self.orientation == ALSplitViewOrientationHorizontal)
@@ -149,7 +149,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	NSMutableArray *views = [NSMutableArray arrayWithCapacity:[self numberOfHandles] + 1];
 	for (NSInteger i = 0; i < [self numberOfHandles] + 1; i++)
 	{
-		NSView *view = [self subviews][i];
+		NSView *view = self.subviews[i];
 		NSRect frame = view.frame;
 		[views addObject:@{ @"x" : @(frame.origin.x), @"y" : @(frame.origin.y), @"width" : @(frame.size.width), @"height" : @(frame.size.height) }];
 	}
@@ -164,7 +164,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 		return;
 	}
 	NSNumber *handlesCountNumber = dictionary[@"handlesCount"];
-	NSInteger handlesCount = [handlesCountNumber integerValue];
+	NSInteger handlesCount = handlesCountNumber.integerValue;
 	ALSplitViewOrientation orientation = (ALSplitViewOrientation)[dictionary[@"orientation"] integerValue];
 	if (orientation != self.orientation)
 	{
@@ -180,11 +180,11 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 #endif
 		return;
 	}
-	[self removeConstraints:[self constraints]];
+	[self removeConstraints:self.constraints];
 	NSArray *views = dictionary[@"views"];
 	for (NSInteger i = 0; i < handlesCount + 1; i++)
 	{
-		NSView *view = [self subviews][i];
+		NSView *view = self.subviews[i];
 		NSDictionary *viewDict = views[i];
 		CGFloat x = [viewDict[@"x"] floatValue];
 		CGFloat y = [viewDict[@"y"] floatValue];
@@ -201,7 +201,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 			frame.origin.y = y;
 			frame.size.height = h;
 		}
-		[view setFrame:frame];
+		view.frame = frame;
 	}
 	[self addInternalConstraints:nil];
 	[self addSizingConstrants:nil];
@@ -212,8 +212,8 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 
 - (void)updateInternalConstraints
 {
-	NSArray *views = [self subviews];
-	NSInteger viewsCount = [views count];
+	NSArray *views = self.subviews;
+	NSInteger viewsCount = views.count;
 	NSMutableArray *newConstraints = [NSMutableArray arrayWithCapacity:viewsCount];
 	NSDictionary *metrics = @{ @"handleWidth" : @(self.handleWidth) };
 	NSMutableDictionary *viewsDict = [NSMutableDictionary dictionary];
@@ -221,7 +221,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	NSView *currentView = nil;
 	for (NSInteger i = 0; i < viewsCount; i++)
 	{
-		currentView = [views objectAtIndex:i];
+		currentView = views[i];
 
 		viewsDict[@"currentView"] = currentView;
 		if (!previousView)
@@ -308,8 +308,8 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 {
 	NSMutableArray *constraints = [NSMutableArray array];
 
-	NSArray *views = [self subviews];
-	NSInteger numberOfViews = [views count];
+	NSArray *views = self.subviews;
+	NSInteger numberOfViews = views.count;
 
 	CGFloat spaceForAllHandles = self.handleWidth * [self numberOfHandles];
 	CGFloat spaceForAllViews;
@@ -330,11 +330,11 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 		CGFloat percentOfTotalSpace;
 		if (self.orientation == ALSplitViewOrientationVertical)
 		{
-			percentOfTotalSpace = NSHeight([currentView frame]) / spaceForAllViews;
+			percentOfTotalSpace = NSHeight(currentView.frame) / spaceForAllViews;
 		}
 		else
 		{
-			percentOfTotalSpace = NSWidth([currentView frame]) / spaceForAllViews;
+			percentOfTotalSpace = NSWidth(currentView.frame) / spaceForAllViews;
 		}
 
 		NSLayoutConstraint *newConstraint;
@@ -349,11 +349,11 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 
 		if (handleIndex == -2)
 		{
-			[newConstraint setPriority:NSLayoutPriorityDefaultLow];
+			newConstraint.priority = NSLayoutPriorityDefaultLow;
 		}
 		else
 		{
-			[newConstraint setPriority:NSLayoutPriorityFittingSizeCompression + priorityIncrement * distanceOfViewWithIndexFromDividerWithIndex(i, handleIndex)];
+			newConstraint.priority = NSLayoutPriorityFittingSizeCompression + priorityIncrement * distanceOfViewWithIndexFromDividerWithIndex(i, handleIndex);
 		}
 
 		[constraints addObject:newConstraint];
@@ -386,7 +386,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 - (NSInteger)handleIndexForPoint:(NSPoint)point
 {
 	__block NSInteger handleIndex = -1;
-	[[self subviews] enumerateObjectsUsingBlock:^(id subview, NSUInteger i, BOOL *stop) {
+	[self.subviews enumerateObjectsUsingBlock:^(id subview, NSUInteger i, BOOL *stop) {
 		NSRect subviewFrame = [subview frame];
 		if (NSPointInRect(point, subviewFrame))
 		{
@@ -424,7 +424,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 
 - (NSInteger)numberOfHandles
 {
-	return [[self subviews] count] - 1;
+	return self.subviews.count - 1;
 }
 
 - (NSRect)rectOfHandleAtIndex:(NSInteger)index
@@ -438,20 +438,20 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	}
 
 	NSRect handleRect;
-	NSView *view = [self subviews][index];
+	NSView *view = self.subviews[index];
 
 	if (self.orientation == ALSplitViewOrientationHorizontal)
 	{
 		handleRect.origin.x = view.frame.origin.x + view.frame.size.width;
 		handleRect.origin.y = 0.f;
 		handleRect.size.height = self.frame.size.height;
-		handleRect.size.width = [self handleWidth];
+		handleRect.size.width = self.handleWidth;
 	}
 	else
 	{
 		handleRect.origin.x = 0.f;
-		handleRect.origin.y = view.frame.origin.y - [self handleWidth];
-		handleRect.size.height = [self handleWidth];
+		handleRect.origin.y = view.frame.origin.y - self.handleWidth;
+		handleRect.size.height = self.handleWidth;
 		handleRect.size.width = self.frame.size.width;
 	}
 
@@ -470,7 +470,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	{
 		newCursor = [NSCursor resizeUpDownCursor];
 	}
-	[self addCursorRect:[self bounds] cursor:newCursor];
+	[self addCursorRect:self.bounds cursor:newCursor];
 	[newCursor set];
 }
 
@@ -478,7 +478,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 {
 	[super resetCursorRects];
 	NSCursor *newCursor = [NSCursor arrowCursor];
-	[self addCursorRect:[self bounds] cursor:newCursor];
+	[self addCursorRect:self.bounds cursor:newCursor];
 	[newCursor set];
 }
 
@@ -498,7 +498,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	{
 		_orientation = orientation;
 		[self setNeedsDisplay:YES];
-		[self removeConstraints:[self constraints]];
+		[self removeConstraints:self.constraints];
 		[self addInternalConstraints:nil];
 		[self addSizingConstrants:nil];
 	}
@@ -595,8 +595,8 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 			if (self.handleImage)
 			{
 				NSRect centeredRect;
-				centeredRect.origin.x = handleRect.origin.x + (handleRect.size.width - [self.handleImage size].width) / 2.f;
-				centeredRect.origin.y = handleRect.origin.y + (handleRect.size.height - [self.handleImage size].height) / 2.f;
+				centeredRect.origin.x = handleRect.origin.x + (handleRect.size.width - (self.handleImage).size.width) / 2.f;
+				centeredRect.origin.y = handleRect.origin.y + (handleRect.size.height - (self.handleImage).size.height) / 2.f;
 				centeredRect.size = self.handleImage.size;
 				[self.handleImage drawInRect:centeredRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.f respectFlipped:YES hints:nil];
 			}
@@ -634,9 +634,9 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 - (void)willRemoveSubview:(NSView *)subview
 {
 	NSMutableArray *constraintsToRemove = [NSMutableArray array];
-	for (NSLayoutConstraint *c in [self constraints])
+	for (NSLayoutConstraint *c in self.constraints)
 	{
-		if (([c secondItem] == subview) || ([c firstItem] == subview))
+		if ((c.secondItem == subview) || (c.firstItem == subview))
 		{
 			[constraintsToRemove addObject:c];
 		}
@@ -650,7 +650,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-	NSPoint location = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	NSPoint location = [self convertPoint:theEvent.locationInWindow fromView:nil];
 	NSInteger handleIndex = [self handleIndexForPoint:location];
 
 	if (handleIndex != -1)
@@ -660,18 +660,18 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 #endif
 		[self updateSizingContstraintsForHandleIndex:handleIndex];
 
-		NSView *viewAboveDivider = [self subviews][handleIndex];
+		NSView *viewAboveDivider = self.subviews[handleIndex];
 		if (self.orientation == ALSplitViewOrientationVertical)
 		{
-			self.draggingConstraint = [[NSLayoutConstraint constraintsWithVisualFormat:@"V:[viewAboveDivider]-100-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(viewAboveDivider)] lastObject];
+			self.draggingConstraint = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[viewAboveDivider]-100-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(viewAboveDivider)].lastObject;
 			self.draggingConstraint.constant = location.y + self.handleWidth / 2.f;
 		}
 		else
 		{
-			self.draggingConstraint = [[NSLayoutConstraint constraintsWithVisualFormat:@"H:[viewAboveDivider]-100-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(viewAboveDivider)] lastObject];
+			self.draggingConstraint = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[viewAboveDivider]-100-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(viewAboveDivider)].lastObject;
 			self.draggingConstraint.constant = (self.frame.size.width - location.x + self.handleWidth / 2.f);
 		}
-		[self.draggingConstraint setPriority:NSLayoutPriorityDragThatCannotResizeWindow];
+		(self.draggingConstraint).priority = NSLayoutPriorityDragThatCannotResizeWindow;
 
 		[self addConstraint:self.draggingConstraint];
 		[self setNeedsDisplay:YES];
@@ -686,7 +686,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 {
 	if (self.draggingConstraint)
 	{
-		NSPoint location = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+		NSPoint location = [self convertPoint:theEvent.locationInWindow fromView:nil];
 #if ALSPLITVIEW_DEBUG
 		NSLog(@"mouseDragged: (%f, %f)", location.x, location.y);
 #endif
@@ -732,7 +732,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 
 - (void)mouseMoved:(NSEvent *)theEvent
 {
-	NSPoint location = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	NSPoint location = [self convertPoint:theEvent.locationInWindow fromView:nil];
 	BOOL resizingCursor = NO;
 	for (NSInteger i = 0; i < [self numberOfHandles]; i++)
 	{

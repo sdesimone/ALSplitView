@@ -19,7 +19,7 @@
 
 @implementation AdditionalWindowController
 
-- (id)initWithWindowNibName:(NSString *)windowNibName
+- (instancetype)initWithWindowNibName:(NSString *)windowNibName
 {
 	self = [super initWithWindowNibName:windowNibName];
 	if (self)
@@ -36,7 +36,7 @@
 - (void)windowDidLoad
 {
 	[super windowDidLoad];
-	[self.webView setMainFrameURL:@"http://news.google.com"];
+	(self.webView).mainFrameURL = @"http://news.google.com";
 	[self.splitView setMinimumWidth:200.f forViewAtIndex:0];
 	[self.splitView setMaximumWidth:400.f forViewAtIndex:0];
 	[self.splitView setMinimumWidth:400.f forViewAtIndex:1];
@@ -50,7 +50,7 @@
 {
 	if (!item)
 	{
-		return [self.outlineViewData count];
+		return (self.outlineViewData).count;
 	}
 	else
 	{
