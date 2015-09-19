@@ -12,23 +12,18 @@
 
 @interface AppDelegate ()
 
-@property (retain) AdditionalWindowController *additionalWindow;
+@property (strong) AdditionalWindowController *additionalWindow;
 
 @end
 
 @implementation AppDelegate
 
-- (void)dealloc
-{
-	self.additionalWindow = nil;
-	[super dealloc];
-}
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
 	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"];
 
-	self.additionalWindow = [[[AdditionalWindowController alloc] initWithWindowNibName:@"AdditionalWindowController"] autorelease];
+	self.additionalWindow = [[AdditionalWindowController alloc] initWithWindowNibName:@"AdditionalWindowController"];
 
 	[self.imageView setWantsLayer:YES];
 	[self.imageView2 setWantsLayer:YES];
@@ -72,7 +67,7 @@
 
 - (IBAction)onAddView:(id)sender
 {
-	NSView *view = [[[NSView alloc] initWithFrame:NSMakeRect(0.f, 0.f, 100.f, 100.f)] autorelease];
+	NSView *view = [[NSView alloc] initWithFrame:NSMakeRect(0.f, 0.f, 100.f, 100.f)];
 	[view setWantsLayer:YES];
 	view.layer.contents = [NSImage imageNamed:@"dog"];
 	[self.splitView addSubview:view];

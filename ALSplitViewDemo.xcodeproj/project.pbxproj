@@ -301,6 +301,7 @@
 		C51E4A8A16D35C2000F908C3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ALSplitViewDemo/ALSplitViewDemo-Prefix.pch";
@@ -313,6 +314,7 @@
 		C51E4A8B16D35C2000F908C3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ALSplitViewDemo/ALSplitViewDemo-Prefix.pch";

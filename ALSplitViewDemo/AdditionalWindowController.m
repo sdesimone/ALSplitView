@@ -13,7 +13,7 @@
 
 @interface AdditionalWindowController ()
 
-@property (retain) NSMutableArray *outlineViewData;
+@property (strong) NSMutableArray *outlineViewData;
 
 @end
 

@@ -13,8 +13,8 @@
 
 @interface AdditionalWindowController : NSWindowController <NSOutlineViewDataSource, NSOutlineViewDelegate>
 
-@property (assign) IBOutlet ALSplitView *splitView;
-@property (assign) IBOutlet WebView *webView;
-@property (assign) IBOutlet NSOutlineView *outline;
+@property (weak) IBOutlet ALSplitView *splitView;
+@property (weak) IBOutlet WebView *webView;
+@property (weak) IBOutlet NSOutlineView *outline;
 
 @end

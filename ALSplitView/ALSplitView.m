@@ -26,11 +26,11 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	CGFloat _handleWidth;
 }
 
-@property (retain) NSMutableArray *internalConstraints;
-@property (retain) NSMutableArray *sizingConstraints;
-@property (retain) NSLayoutConstraint *draggingConstraint;
-@property (retain) NSMutableArray *minimumSizeConstraints;
-@property (retain) NSTrackingArea *trackingArea;
+@property (strong) NSMutableArray *internalConstraints;
+@property (strong) NSMutableArray *sizingConstraints;
+@property (strong) NSLayoutConstraint *draggingConstraint;
+@property (strong) NSMutableArray *minimumSizeConstraints;
+@property (strong) NSTrackingArea *trackingArea;
 
 - (void)updateInternalConstraints;
 - (void)addInternalConstraints:(NSMutableArray *)constraints;
@@ -51,7 +51,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 - (void)updateTrackingAreas
 {
 	[self removeTrackingArea:self.trackingArea];
-	self.trackingArea = [[[NSTrackingArea alloc] initWithRect:self.frame options:(NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingActiveAlways | NSTrackingInVisibleRect) owner:self userInfo:nil] autorelease];
+	self.trackingArea = [[NSTrackingArea alloc] initWithRect:self.frame options:(NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingActiveAlways | NSTrackingInVisibleRect) owner:self userInfo:nil];
 	[self addTrackingArea:self.trackingArea];
 	[super updateTrackingAreas];
 }
@@ -81,13 +81,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	self.handleColor = nil;
 	self.handleBackgroundImage = nil;
 	self.handleImage = nil;
-	self.internalConstraints = nil;
-	self.sizingConstraints = nil;
-	self.draggingConstraint = nil;
-	self.minimumSizeConstraints = nil;
 	[self removeTrackingArea:self.trackingArea];
-	self.trackingArea = nil;
-	[super dealloc];
 }
 
 - (CGFloat)minimumWidthForViewAtIndex:(NSInteger)index
@@ -522,8 +516,6 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 {
 	@synchronized(self)
 	{
-		[handleColor retain];
-		[_handleColor release];
 		_handleColor = handleColor;
 		[self setNeedsDisplay:YES];
 	}
@@ -541,8 +533,6 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 {
 	@synchronized(self)
 	{
-		[handleBackgroundImage retain];
-		[_handleBackgroundImage release];
 		_handleBackgroundImage = handleBackgroundImage;
 		[self setNeedsDisplay:YES];
 	}
@@ -560,8 +550,6 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 {
 	@synchronized(self)
 	{
-		[handleImage retain];
-		[_handleImage release];
 		_handleImage = handleImage;
 		[self setNeedsDisplay:YES];
 	}
