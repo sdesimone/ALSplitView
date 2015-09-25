@@ -72,7 +72,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 - (void)awakeFromNib
 {
 	// removing constraints loaded from xib, we'll make our own
-	[self removeConstraints:self.constraints];
+    [NSLayoutConstraint deactivateConstraints:self.constraints];
 	[super awakeFromNib];
 }
 
@@ -110,7 +110,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 		format = @"V:[view(>=minWidth)]";
 	}
 	NSArray *newConstraints = [NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:metrics views:NSDictionaryOfVariableBindings(view)];
-	[self addConstraints:newConstraints];
+    [NSLayoutConstraint activateConstraints:newConstraints];
 	[self setNeedsUpdateConstraints:YES];
 }
 
@@ -135,7 +135,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 		format = @"V:[view(<=maxWidth)]";
 	}
 	NSArray *newConstraints = [NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:metrics views:NSDictionaryOfVariableBindings(view)];
-	[self addConstraints:newConstraints];
+    [NSLayoutConstraint activateConstraints:newConstraints];
 	[self setNeedsUpdateConstraints:YES];
 }
 
@@ -180,7 +180,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 #endif
 		return;
 	}
-	[self removeConstraints:self.constraints];
+    [NSLayoutConstraint deactivateConstraints:self.constraints];
 	NSArray *views = dictionary[@"views"];
 	for (NSInteger i = 0; i < handlesCount + 1; i++)
 	{
@@ -291,12 +291,12 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	}
 	if (self.internalConstraints)
 	{
-		[self removeConstraints:self.internalConstraints];
+        [NSLayoutConstraint deactivateConstraints:self.internalConstraints];
 	}
 	self.internalConstraints = constraints;
 	if (self.internalConstraints)
 	{
-		[self addConstraints:self.internalConstraints];
+        [NSLayoutConstraint activateConstraints:self.internalConstraints];
 	}
 	else
 	{
@@ -370,12 +370,12 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	}
 	if (self.sizingConstraints)
 	{
-		[self removeConstraints:self.sizingConstraints];
+        [NSLayoutConstraint deactivateConstraints:self.sizingConstraints];
 	}
 	self.sizingConstraints = constraints;
 	if (self.sizingConstraints)
 	{
-		[self addConstraints:self.sizingConstraints];
+        [NSLayoutConstraint activateConstraints:self.sizingConstraints];
 	}
 	else
 	{
@@ -498,7 +498,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 	{
 		_orientation = orientation;
 		[self setNeedsDisplay:YES];
-		[self removeConstraints:self.constraints];
+        [NSLayoutConstraint deactivateConstraints:self.constraints];
 		[self addInternalConstraints:nil];
 		[self addSizingConstrants:nil];
 	}
@@ -641,7 +641,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 			[constraintsToRemove addObject:c];
 		}
 	}
-	[self removeConstraints:constraintsToRemove];
+    [NSLayoutConstraint deactivateConstraints:constraintsToRemove];
 	[self addInternalConstraints:nil];
 	[super willRemoveSubview:subview];
 }
@@ -716,7 +716,7 @@ static int distanceOfViewWithIndexFromDividerWithIndex(NSInteger viewIndex, NSIn
 #if ALSPLITVIEW_DEBUG
 		NSLog(@"mouseUp");
 #endif
-		[self removeConstraint:self.draggingConstraint];
+        [NSLayoutConstraint deactivateConstraints:self.draggingConstraint];
 		self.draggingConstraint = nil;
 
 		[self updateSizingContstraintsForHandleIndex:-2];
